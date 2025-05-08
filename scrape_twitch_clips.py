@@ -3,7 +3,7 @@ import requests
 import asyncio
 from playwright.async_api import async_playwright
 
-# Twitch API credentials
+# Twitch API credentials (replace with your own)
 CLIENT_ID = "n8jflzhuunlwt942q5rkz4opcnng1o"
 CLIENT_SECRET = "p8f0wmf717y6te0vlkt9ow4jg9wsxd"
 BASE_URL = "https://api.twitch.tv/helix"
@@ -68,8 +68,8 @@ async def download_clip_with_playwright(clip_url, save_path):
         await page.goto(clip_url)
 
         # Wait for the "Share" button and click it
-        await page.wait_for_selector('button[data-a-target="share-button"]', timeout=10000)
-        await page.click('button[data-a-target="share-button"]')
+        await page.wait_for_selector('button:has-text("Share")', timeout=10000)
+        await page.click('button:has-text("Share")')
 
         # Wait for the "Download Landscape Version" button
         download_button = await page.wait_for_selector('a:has-text("Download Landscape Version")', timeout=10000)
@@ -85,11 +85,11 @@ async def download_clip_with_playwright(clip_url, save_path):
         clip_name = os.path.basename(download_link.split("?")[0])
         save_file_path = os.path.join(save_path, clip_name)
 
-        # Start the download
+        # Correct usage of expect_download on the Page object
         print(f"Downloading clip: {clip_name}")
-        async with context.expect_download() as download_event:
+        async with page.expect_download() as download_info:
             await download_button.click()
-        download = await download_event.value
+        download = await download_info.value
         await download.save_as(save_file_path)
 
         print(f"Downloaded: {save_file_path}")
