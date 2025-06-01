@@ -75,7 +75,7 @@ def fetch_clips_last_7_days(broadcaster_id, token):
 async def download_clip_with_playwright(clip_url, clip_name, save_path):
     async with async_playwright() as p:
         # Launch the browser
-        browser = await p.chromium.launch(headless=False)  # Set headless=True to hide the browser
+        browser = await p.chromium.launch(headless=True)  # Set headless=True to hide the browser
         context = await browser.new_context()
 
         # Open a new page and navigate to the clip URL
